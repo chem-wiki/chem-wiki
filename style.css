@@ -52,6 +52,10 @@ body {
     padding: 20px 0;
     flex-shrink: 0;
     transition: background-color 0.3s, border-color 0.3s;
+    height: 100vh;
+    overflow-y: auto;
+    position: sticky;
+    top: 0;
 }
 
 .sidebar h2 {

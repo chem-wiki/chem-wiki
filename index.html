@@ -3,10 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>无机元素化学核心考点总结</title>
+    <title>Chem Wiki</title>
     <link rel="stylesheet" href="style.css">
     <!-- 引入 marked.js 用于解析 Markdown -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- 引入 MathJax 用于解析 LaTeX -->
+    <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        packages: {'[+]': ['mhchem']}
+      },
+      loader: {load: ['[tex]/mhchem']},
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <!-- 移动端菜单切换按钮 -->
@@ -21,7 +37,7 @@
 
     <div class="container">
         <aside class="sidebar">
-            <h2>元素导航</h2>
+            <h2 id="sidebar-title" style="cursor: pointer;">Chem Wiki</h2>
             <ul id="element-list">
                 <!-- 列表由 JS 动态生成 -->
             </ul>
