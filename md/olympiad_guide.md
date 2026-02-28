@@ -1,41 +1,41 @@
-# Chinese Chemistry Olympiad (CChO) Guide
+# 中国化学奥林匹克 (CChO) 指南
 
-The Chinese Chemistry Olympiad (CChO) is a prestigious competition aimed at identifying and nurturing young chemical talents in China. It is a challenging but rewarding journey that tests students' theoretical knowledge and experimental skills.
+中国化学奥林匹克（CChO）是一项旨在发掘和培养中国化学英才的著名竞赛。这是一段充满挑战但也极具价值的旅程，全面考验学生的理论知识和实验技能。
 
-## 1. Overview
-The CChO process is generally divided into three main stages: the Preliminary Round (Provincial Level), the National Final (Winter Camp), and the IChO Selection (National Training Team). Each stage serves as a filter to select the most outstanding students to represent China on the international stage.
+## 1. 概览
+CChO 的流程通常分为三个主要阶段：初赛（省级赛区）、决赛（冬令营）和国家集训队选拔。每个阶段层层递进，选拔最优秀的学生代表中国参加国际化学奥林匹克竞赛。
 
-## 2. Preliminary Round (初赛)
-Also known as the "Provincial Round," this is the first major hurdle for aspiring chemists.
+## 2. 初赛 (Preliminary Round)
+也称为“省级赛区”，这是有志于化学竞赛的学生面临的第一道重要关卡。
 
-*   **Time**: Typically held in **Late August or Early September**.
-*   **Format**: A **3-hour theoretical exam**. The questions cover a wide range of topics including inorganic, organic, and physical chemistry, often extending beyond the standard high school curriculum.
-*   **Goal**: The primary objective is to achieve the **Provincial First Prize (省一)**. Top performers in this round are selected for the **Provincial Team (省队)**, qualifying them to compete in the National Final.
+*   **时间**：通常在**8月底或9月初**举行。
+*   **形式**：**3小时理论考试**。题目涵盖无机、有机和物理化学等广泛主题，内容往往超出标准高中课程范围。
+*   **目标**：主要目标是获得**省级赛区一等奖（省一）**。在这一轮表现优异的学生将被选入**省队**，获得参加全国决赛的资格。
 
-## 3. National Final (决赛/冬令营)
-Officially the "Chinese Chemistry Olympiad (Final)," often referred to as the Winter Camp.
+## 3. 决赛/冬令营 (National Final)
+正式名称为“中国化学奥林匹克（决赛）”，通常被称为冬令营。
 
-*   **Time**: Usually takes place in **Late November or Early December**.
-*   **Format**: The competition is more intense, consisting of both **Advanced Theory** and **Experimental** exams. The experimental component is crucial and can often be the deciding factor.
-*   **Awards**: Medals are awarded based on total scores:
-    *   **Gold Medal (金牌)**
-    *   **Silver Medal (银牌)**
-    *   **Bronze Medal (铜牌)**
-*   **Significance**: The Top 50 students (all Gold Medalists) gain entry into the **National Training Team (集训队)**. These students are eligible for **Baosong (保送)**, granting them direct admission to top universities like Peking University (PKU) or Tsinghua University (THU) without taking the Gaokao.
+*   **时间**：通常在**11月底或12月初**举行。
+*   **形式**：竞争更加激烈，包括**高级理论**和**实验**考试。实验部分至关重要，往往是决定胜负的关键因素。
+*   **奖项**：根据总分颁发奖牌：
+    *   **金牌 (Gold Medal)**
+    *   **银牌 (Silver Medal)**
+    *   **铜牌 (Bronze Medal)**
+*   **意义**：前50名学生（均为金牌得主）将入选**国家集训队**。这些学生有资格获得**保送**，直接被北京大学或清华大学等顶尖高校录取，无需参加高考。
 
-## 4. IChO Selection (集训队)
-This is the pinnacle of domestic competition.
+## 4. 集训队 (IChO Selection)
+这是国内竞赛的巅峰。
 
-*   **Time**: Held in **March or April** of the following year.
-*   **Format**: A rigorous series of theoretical and experimental exams, often more difficult than the International Chemistry Olympiad (IChO) itself.
-*   **Goal**: To select the **National Team**, consisting of the top 4 students who will represent China at the annual IChO.
+*   **时间**：在次年的**3月或4月**举行。
+*   **形式**：一系列严格的理论和实验考试，难度往往超过国际化学奥林匹克（IChO）本身。
+*   **目标**：选拔**国家队**，由4名顶尖学生组成，代表中国参加年度 IChO。
 
-## 5. Preparation Advice
-Success in the Chemistry Olympiad requires dedication and a strategic approach.
+## 5. 备考建议 (Preparation Advice)
+要在化学奥林匹克中取得成功，需要持之以恒的努力和战略性的方法。
 
-*   **Build a Strong Foundation**: Ensure a deep understanding of high school chemistry before diving into university-level textbooks.
-*   **Balance Theory and Experiment**: While theory is the bulk of the Preliminary Round, do not neglect experimental skills. Basic lab techniques and data analysis are vital for the National Final.
-*   **Solve Past Papers**: Regularly practicing past CChO and IChO problems is essential to understand the question style and manage time effectively.
-*   **Stay Curious**: Beyond the syllabus, cultivate a genuine passion for chemistry. Read widely and stay updated with recent chemical discoveries.
+*   **打好基础**：在深入钻研大学教材之前，确保对高中化学有深刻理解。
+*   **平衡理论与实验**：虽然初赛以理论为主，但不要忽视实验技能。基本的实验室技术和数据分析对决赛至关重要。
+*   **做真题**：定期练习 CChO 和 IChO 的历年真题，这对于理解出题风格和有效管理时间至关重要。
+*   **保持好奇心**：除了大纲内容，还要培养对化学的真正热情。广泛阅读，关注最新的化学发现。
 
-Good luck on your journey to excellence!
+祝你在追求卓越的旅程中好运！

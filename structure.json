@@ -1,9 +1,6 @@
 [
     {
         "groupName": "元素化学",
-        "elements": [
-            { "id": "olympiad_guide", "name": "中国化学竞赛流程" }
-        ],
         "subGroups": [
             {
                 "groupName": "s区元素",
@@ -84,6 +81,7 @@
     {
         "groupName": "化学专题",
         "elements": [
+            { "id": "olympiad_guide", "name": "中国化学竞赛流程" },
             { "id": "special/redox_ranking", "name": "氧化还原大乱斗" },
             { "id": "special/acid_base_ranking", "name": "酸碱争霸赛" }
         ]
