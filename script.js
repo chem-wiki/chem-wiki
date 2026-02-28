@@ -25,13 +25,22 @@ async function init() {
         
         // 验证 ID 是否有效（防止存入无效路径导致加载失败）
         let isValidId = false;
-        if (lastVisited) {
-            for (const group of elementGroups) {
-                if (group.elements.some(el => el.id === lastVisited)) {
-                    isValidId = true;
-                    break;
+
+        const checkIdRecursive = (groups, id) => {
+            if (!groups) return false;
+            for (const group of groups) {
+                if (group.elements && group.elements.some(el => el.id === id)) {
+                    return true;
+                }
+                if (group.subGroups && checkIdRecursive(group.subGroups, id)) {
+                    return true;
                 }
             }
+            return false;
+        };
+
+        if (lastVisited) {
+            isValidId = checkIdRecursive(elementGroups, lastVisited);
         }
         
         // Check if we are on file protocol - if so, warn about potential fetch issues
