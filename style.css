@@ -73,6 +73,27 @@ body {
     opacity: 0.7;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    /* Added for details/summary */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    list-style: none; /* Hide default marker */
+}
+
+/* Hide default marker for Chrome/Safari */
+.group-header::-webkit-details-marker {
+    display: none;
+}
+
+/* Custom arrow */
+.group-header::after {
+    content: '▶';
+    font-size: 0.7em;
+    transition: transform 0.2s ease;
+}
+
+details[open] > .group-header::after {
+    transform: rotate(90deg);
 }
 
 .sidebar ul {
@@ -147,7 +168,7 @@ body {
 .theme-toggle {
     position: fixed;
     top: 20px;
-    right: 20px;
+    right: 70px; /* Shifted left to make room for GitHub icon */
     background: var(--sidebar-bg);
     border: 1px solid var(--border-color);
     color: var(--text-color);
@@ -165,6 +186,30 @@ body {
 
 .theme-toggle:hover {
     transform: scale(1.1);
+}
+
+/* GitHub Link */
+.github-link {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--sidebar-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.github-link:hover {
+    transform: scale(1.1);
+    color: var(--accent-color);
 }
 
 /* 移动端菜单切换按钮 */

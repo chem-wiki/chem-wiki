@@ -83,27 +83,77 @@ async function init() {
 
 // 渲染侧边栏
 function renderSidebar() {
-    elementGroups.forEach(group => {
-        // 创建分组标题
-        const groupHeader = document.createElement('div');
-        groupHeader.className = 'group-header';
-        groupHeader.textContent = group.groupName;
-        elementList.appendChild(groupHeader);
-
-        // 创建该分组下的元素列表
-        group.elements.forEach(el => {
-            const li = document.createElement('li');
-            li.textContent = el.name;
-            li.dataset.id = el.id;
-            li.addEventListener('click', () => {
-                loadElement(el.id);
-                // 在移动端点击后自动收起侧边栏
-                if (window.innerWidth <= 768 && sidebar) {
-                    sidebar.classList.remove('open');
-                }
-            });
-            elementList.appendChild(li);
+    elementList.innerHTML = ''; // Clear existing content
+    
+    // Helper function to create list items
+    const createListItem = (el) => {
+        const li = document.createElement('li');
+        li.textContent = el.name;
+        li.dataset.id = el.id;
+        li.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent toggling details when clicking item
+            loadElement(el.id);
+            // 在移动端点击后自动收起侧边栏
+            if (window.innerWidth <= 768 && sidebar) {
+                sidebar.classList.remove('open');
+            }
         });
+        return li;
+    };
+
+    // Helper function to create a details group
+    const createDetailsGroup = (name, elements, subGroups) => {
+        const details = document.createElement('details');
+        details.open = true; // Default open
+        
+        const summary = document.createElement('summary');
+        summary.className = 'group-header';
+        summary.textContent = name;
+        summary.style.cursor = 'pointer';
+        summary.style.userSelect = 'none';
+        
+        const ul = document.createElement('ul');
+        ul.style.listStyle = 'none';
+        ul.style.padding = '0';
+        ul.style.margin = '0';
+        
+        // Render top-level elements if any
+        if (elements) {
+            elements.forEach(el => {
+                ul.appendChild(createListItem(el));
+            });
+        }
+        
+        // Render sub-groups if any
+        if (subGroups) {
+            subGroups.forEach(sub => {
+                // Nested groups usually have their own details/summary structure
+                // But we can just append them as nested details inside the UL or directly in details
+                // To keep indentation nice, let's put them in the UL but as a special item
+                const subDetails = createDetailsGroup(sub.groupName, sub.elements, sub.subGroups);
+                subDetails.style.marginLeft = '15px'; // Indent subgroups
+                
+                // Wrap in li or just append? 
+                // Let's just append to details directly to avoid li bullet issues if styles aren't perfect,
+                // BUT current CSS targets ul li. 
+                // Let's stick to the structure: details > summary + ul > li
+                // For nested groups, it's: details > summary + ul > (li > details...)
+                
+                const li = document.createElement('li');
+                li.style.listStyle = 'none';
+                li.appendChild(subDetails);
+                ul.appendChild(li);
+            });
+        }
+
+        details.appendChild(summary);
+        details.appendChild(ul);
+        return details;
+    };
+
+    elementGroups.forEach(group => {
+        const details = createDetailsGroup(group.groupName, group.elements, group.subGroups);
+        elementList.appendChild(details);
     });
 }
 
@@ -116,22 +166,73 @@ function renderHome() {
     localStorage.removeItem('lastVisited');
 
     let html = '<div class="home-container" style="padding: 20px; max-width: 1200px; margin: 0 auto;">';
-    html += '<h1 style="text-align: center; margin-bottom: 40px; color: var(--text-primary);">知识库目录</h1>';
+    
+    // Intro Section
+    html += `
+        <div class="intro-section" style="margin-bottom: 40px; padding: 30px; background: var(--bg-secondary); border-radius: 12px; border: 1px solid var(--border-color);">
+            <h1 style="margin-top: 0; color: var(--text-primary); font-size: 2.2rem;">关于 Chem Wiki</h1>
+            <p style="font-size: 1.1rem; line-height: 1.6; color: var(--text-secondary);">
+                这是一个开源的化学知识库，旨在为化学竞赛学生和爱好者提供高质量、系统化的学习资源。
+                当前版本已部署于 <code>chem-wiki.llumi.org</code>。我们非常欢迎您的贡献！
+            </p>
+            <div style="margin-top: 20px;">
+                <button onclick="loadElement('contribution')" 
+                        style="background-color: var(--primary-color, #007bff); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 1rem; transition: background 0.3s;">
+                    了解更多
+                </button>
+            </div>
+        </div>
+    `;
+
+    html += '<h2 style="text-align: center; margin-bottom: 30px; color: var(--text-primary);">Chem Wiki 目录</h2>';
+    
+    // Helper for cards
+    const renderCard = (el) => `
+        <div class="home-card" 
+              onclick="loadElement('${el.id}')"
+              style="background: var(--bg-secondary); padding: 20px; border-radius: 12px; cursor: pointer; border: 1px solid var(--border-color); transition: all 0.3s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+            <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-primary); font-weight: 600;">${el.name}</h3>
+        </div>`;
+
+    // Recursive function to render groups
+    const renderGroup = (group, level) => {
+        // level defaults to 2 if not provided (called from loop)
+        level = level || 2;
+        
+        // Wrapper for the group
+        let groupHtml = `<div class="home-group" style="margin-bottom: 20px; ${level > 2 ? 'margin-left: 20px; border-left: 2px solid var(--border-color); padding-left: 15px;' : ''}">`;
+        
+        // Details/Summary structure
+        // Only use details if it's not the root or if specifically desired. Here we use it for all.
+        // We set it to open by default
+        groupHtml += `<details open>
+            <summary style="font-size: ${level === 2 ? '1.5rem' : '1.2rem'}; font-weight: bold; cursor: pointer; margin-bottom: 15px; padding: 10px; border-bottom: ${level === 2 ? '2px solid var(--border-color)' : 'none'}; outline: none; list-style: none;">
+                ${group.groupName}
+            </summary>
+            <div style="padding-top: 10px;">`;
+
+        // Render direct elements (if any)
+        if (group.elements && group.elements.length > 0) {
+             groupHtml += `<div class="home-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-bottom: 20px;">`;
+             group.elements.forEach(el => {
+                groupHtml += renderCard(el);
+             });
+             groupHtml += `</div>`;
+        }
+
+        // Render subgroups (if any)
+        if (group.subGroups) {
+             group.subGroups.forEach(sub => {
+                groupHtml += renderGroup(sub, level + 1);
+            });
+        }
+        
+        groupHtml += `</div></details></div>`;
+        return groupHtml;
+    };
     
     elementGroups.forEach(group => {
-        html += `<div class="home-group" style="margin-bottom: 40px;">
-            <h2 style="border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px; color: var(--text-primary);">${group.groupName}</h2>
-            <div class="home-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">`;
-            
-        group.elements.forEach(el => {
-            html += `<div class="home-card" 
-                          onclick="loadElement('${el.id}')"
-                          style="background: var(--bg-secondary); padding: 20px; border-radius: 12px; cursor: pointer; border: 1px solid var(--border-color); transition: all 0.3s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-                    <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-primary); font-weight: 600;">${el.name}</h3>
-                 </div>`;
-        });
-        
-        html += `</div></div>`;
+        html += renderGroup(group);
     });
     
     html += '</div>';
@@ -146,6 +247,22 @@ function renderHome() {
                 transform: translateY(-5px);
                 box-shadow: 0 5px 15px rgba(0,0,0,0.1) !important;
                 border-color: var(--primary-color, #007bff) !important;
+            }
+            details > summary {
+                list-style: none; /* Hide default triangle in some browsers */
+            }
+            details > summary::-webkit-details-marker {
+                display: none;
+            }
+            details > summary::before {
+                content: '▶';
+                display: inline-block;
+                margin-right: 8px;
+                font-size: 0.8em;
+                transition: transform 0.2s;
+            }
+            details[open] > summary::before {
+                transform: rotate(90deg);
             }
         `;
         document.head.appendChild(style);
@@ -253,6 +370,9 @@ function setTheme(theme) {
     }
     localStorage.setItem('theme', theme);
 }
+
+// Expose loadElement to global scope for inline onclick handlers
+window.loadElement = loadElement;
 
 // 启动应用
 init();

@@ -1,42 +1,50 @@
 [
     {
-        "groupName": "s区元素",
+        "groupName": "元素化学",
         "elements": [
-            { "id": "Alkali_Metals", "name": "碱金属 (Li-Cs)" },
-            { "id": "Alkaline_Earth", "name": "碱土金属 (Be-Ba)" }
-        ]
-    },
-    {
-        "groupName": "p区元素",
-        "elements": [
-            { "id": "C_Si_B", "name": "碳族 (C, Si, B)" },
-            { "id": "N", "name": "氮族 (N)" },
-            { "id": "P_As_Sb_Bi", "name": "磷族 (P, As, Sb, Bi)" },
-            { "id": "O", "name": "氧族 (O)" },
-            { "id": "S", "name": "硫 (S)" },
-            { "id": "Cl", "name": "卤素 (Cl, Br, I)" },
-            { "id": "Al", "name": "铝 (Al)" },
-            { "id": "Sn_Pb", "name": "锡铅 (Sn, Pb)" },
-            { "id": "Noble_Gases", "name": "稀有气体 (He-Rn)" }
-        ]
-    },
-    {
-        "groupName": "d区元素 (过渡金属)",
-        "elements": [
-            { "id": "Ti_V", "name": "钛钒 (Ti, V)" },
-            { "id": "Cr", "name": "铬 (Cr)" },
-            { "id": "Mn", "name": "锰 (Mn)" },
-            { "id": "Fe", "name": "铁 (Fe)" },
-            { "id": "Co_Ni", "name": "钴镍 (Co, Ni)" },
-            { "id": "Cu", "name": "铜 (Cu)" },
-            { "id": "Ag", "name": "银 (Ag)" },
-            { "id": "Zn_Cd_Hg", "name": "锌族 (Zn, Cd, Hg)" }
-        ]
-    },
-    {
-        "groupName": "f区元素",
-        "elements": [
-            { "id": "Lanthanides_Actinides", "name": "镧系与锕系" }
+            { "id": "olympiad_guide", "name": "中国化学竞赛流程" }
+        ],
+        "subGroups": [
+            {
+                "groupName": "s区元素",
+                "elements": [
+                    { "id": "Alkali_Metals", "name": "碱金属 (Li-Cs)" },
+                    { "id": "Alkaline_Earth", "name": "碱土金属 (Be-Ba)" }
+                ]
+            },
+            {
+                "groupName": "p区元素",
+                "elements": [
+                    { "id": "C_Si_B", "name": "碳族 (C, Si, B)" },
+                    { "id": "N", "name": "氮族 (N)" },
+                    { "id": "P_As_Sb_Bi", "name": "磷族 (P, As, Sb, Bi)" },
+                    { "id": "O", "name": "氧族 (O)" },
+                    { "id": "S", "name": "硫 (S)" },
+                    { "id": "Cl", "name": "卤素 (Cl, Br, I)" },
+                    { "id": "Al", "name": "铝 (Al)" },
+                    { "id": "Sn_Pb", "name": "锡铅 (Sn, Pb)" },
+                    { "id": "Noble_Gases", "name": "稀有气体 (He-Rn)" }
+                ]
+            },
+            {
+                "groupName": "d区元素 (过渡金属)",
+                "elements": [
+                    { "id": "Ti_V", "name": "钛钒 (Ti, V)" },
+                    { "id": "Cr", "name": "铬 (Cr)" },
+                    { "id": "Mn", "name": "锰 (Mn)" },
+                    { "id": "Fe", "name": "铁 (Fe)" },
+                    { "id": "Co_Ni", "name": "钴镍 (Co, Ni)" },
+                    { "id": "Cu", "name": "铜 (Cu)" },
+                    { "id": "Ag", "name": "银 (Ag)" },
+                    { "id": "Zn_Cd_Hg", "name": "锌族 (Zn, Cd, Hg)" }
+                ]
+            },
+            {
+                "groupName": "f区元素",
+                "elements": [
+                    { "id": "Lanthanides_Actinides", "name": "镧系与锕系" }
+                ]
+            }
         ]
     },
     {
@@ -56,28 +64,28 @@
         "groupName": "结构化学",
         "elements": [
             { "id": "structural/intro", "name": "结构化学导论" },
-            { "id": "structural/quantum_atom", "name": "1. 量子力学基础与原子结构" },
-            { "id": "structural/chemical_bond", "name": "2. 化学键理论" },
-            { "id": "structural/crystal_basics", "name": "3. 晶体学基础" },
-            { "id": "structural/ionic_crystals", "name": "4. 离子晶体结构详解" },
-            { "id": "structural/coordination", "name": "5. 配位化学基础" }
+            { "id": "structural/quantum_atom", "name": "量子力学基础与原子结构" },
+            { "id": "structural/chemical_bond", "name": "化学键理论" },
+            { "id": "structural/crystal_basics", "name": "晶体学基础" },
+            { "id": "structural/ionic_crystals", "name": "离子晶体结构详解" },
+            { "id": "structural/coordination", "name": "配位化学基础" }
         ]
     },
     {
         "groupName": "物理化学",
         "elements": [
             { "id": "physical/intro", "name": "物理化学导论" },
-            { "id": "physical/thermodynamics", "name": "1. 化学热力学" },
-            { "id": "physical/equilibrium", "name": "2. 化学平衡" },
-            { "id": "physical/kinetics", "name": "3. 化学动力学" },
-            { "id": "physical/electrochemistry", "name": "4. 电化学" }
+            { "id": "physical/thermodynamics", "name": "化学热力学" },
+            { "id": "physical/equilibrium", "name": "化学平衡" },
+            { "id": "physical/kinetics", "name": "化学动力学" },
+            { "id": "physical/electrochemistry", "name": "电化学" }
         ]
     },
     {
-        "groupName": "专题 (趣味)",
+        "groupName": "化学专题",
         "elements": [
-            { "id": "special/redox_ranking", "name": "⚡ 氧化还原大乱斗" },
-            { "id": "special/acid_base_ranking", "name": "🍋 酸碱争霸赛" }
+            { "id": "special/redox_ranking", "name": "氧化还原大乱斗" },
+            { "id": "special/acid_base_ranking", "name": "酸碱争霸赛" }
         ]
     }
 ]
