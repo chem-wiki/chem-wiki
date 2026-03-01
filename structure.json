@@ -86,5 +86,12 @@
             { "id": "special/acid_base_ranking", "name": "酸碱争霸赛" },
             { "id": "special/lewis_ranking", "name": "Lewis酸碱排位战" }
         ]
+    },
+    {
+        "groupName": "关于项目",
+        "elements": [
+            { "id": "contribution", "name": "如何贡献" },
+            { "id": "writing_guide", "name": "文章撰写指南" }
+        ]
     }
 ]

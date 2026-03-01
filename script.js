@@ -20,43 +20,65 @@ async function init() {
         elementGroups = await response.json();
         renderSidebar();
         
-        // 默认加载逻辑：检查是否有上次访问记录
-        const lastVisited = localStorage.getItem('lastVisited');
-        
-        // 验证 ID 是否有效（防止存入无效路径导致加载失败）
-        let isValidId = false;
-
-        const checkIdRecursive = (groups, id) => {
-            if (!groups) return false;
-            for (const group of groups) {
-                if (group.elements && group.elements.some(el => el.id === id)) {
-                    return true;
+        // Hash-based routing
+        const handleHashChange = () => {
+            const hash = window.location.hash.substring(1); // Remove '#'
+            if (hash) {
+                // If ID is valid, load it.
+                // We need to check validity to avoid XSS or broken loads.
+                if (checkIdRecursive(elementGroups, hash)) {
+                    loadElement(hash);
+                } else {
+                     console.warn('Invalid hash ID:', hash);
+                     // Optional: redirect to home or show 404
+                     renderHome();
                 }
-                if (group.subGroups && checkIdRecursive(group.subGroups, id)) {
-                    return true;
-                }
+            } else {
+                // No hash -> Home
+                renderHome();
             }
-            return false;
         };
 
-        if (lastVisited) {
-            isValidId = checkIdRecursive(elementGroups, lastVisited);
-        }
+        // Listen for hash changes
+        window.addEventListener('hashchange', handleHashChange);
+        
+        // Initial load check
+        const initialHash = window.location.hash.substring(1);
         
         // Check if we are on file protocol - if so, warn about potential fetch issues
         if (window.location.protocol === 'file:') {
              console.warn('Running via file:// protocol. Fetch may be blocked by CORS policy.');
         }
 
-        if (isValidId) {
+        if (initialHash) {
+             console.log('Loading from hash:', initialHash);
+             if (checkIdRecursive(elementGroups, initialHash)) {
+                 loadElement(initialHash);
+             } else {
+                 console.warn('Invalid initial hash:', initialHash);
+                 renderHome();
+             }
+        } else if (lastVisited) {
+            // Fallback to lastVisited if no hash provided
+            // Or should hash take precedence? Hash is explicit, lastVisited is implicit.
+            // If no hash, use lastVisited but update URL hash?
             console.log('Restoring last visited page:', lastVisited);
-            loadElement(lastVisited);
-        } else {
-            if (lastVisited) {
-                console.warn('Invalid or obsolete lastVisited ID:', lastVisited);
-                localStorage.removeItem('lastVisited');
+            // Verify ID validity
+            if (checkIdRecursive(elementGroups, lastVisited)) {
+                 // Update hash so URL reflects current state
+                 window.location.hash = lastVisited;
+                 // The hashchange event might fire or not depending on browser, 
+                 // but setting hash usually triggers it. 
+                 // To be safe, just load it directly if hashchange doesn't fire immediately?
+                 // Actually setting hash triggers hashchange, so loadElement will be called by handleHashChange.
+                 // But handleHashChange is async if we wait for event loop.
+                 // Let's call loadElement directly to be sure and prevent double load if event fires.
+                 // Standard practice: Update hash, let event handler do the work.
+            } else {
+                renderHome();
             }
-            renderHome();
+        } else {
+             renderHome();
         }
     } catch (error) {
         console.error('Initialization failed:', error);
@@ -101,8 +123,10 @@ function renderSidebar() {
         li.dataset.id = el.id;
         li.addEventListener('click', (e) => {
             e.stopPropagation(); // Prevent toggling details when clicking item
-            loadElement(el.id);
-            // 在移动端点击后自动收起侧边栏
+            // Instead of loading directly, update hash
+            window.location.hash = el.id;
+            
+            // On mobile, close sidebar
             if (window.innerWidth <= 768 && sidebar) {
                 sidebar.classList.remove('open');
             }
@@ -168,6 +192,11 @@ function renderSidebar() {
 
 // 渲染首页（完整目录）
 function renderHome() {
+    // Clear hash if it exists
+    if (window.location.hash) {
+        history.pushState("", document.title, window.location.pathname + window.location.search);
+    }
+    
     // 清除侧边栏选中状态
     document.querySelectorAll('.sidebar li').forEach(li => li.classList.remove('active'));
     
