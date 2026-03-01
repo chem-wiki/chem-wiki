@@ -83,7 +83,8 @@
         "elements": [
             { "id": "olympiad_guide", "name": "中国化学竞赛流程" },
             { "id": "special/redox_ranking", "name": "氧化还原大乱斗" },
-            { "id": "special/acid_base_ranking", "name": "酸碱争霸赛" }
+            { "id": "special/acid_base_ranking", "name": "酸碱争霸赛" },
+            { "id": "special/lewis_ranking", "name": "Lewis酸碱排位战" }
         ]
     }
 ]

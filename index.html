@@ -6,9 +6,9 @@
     <title>Chem Wiki</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="style.css">
-    <!-- 引入 marked.js 用于解析 Markdown -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <!-- 引入 MathJax 用于解析 LaTeX -->
+    <!-- 引入 marked.js 用于解析 Markdown (本地副本) -->
+    <script src="js/marked.min.js"></script>
+    <!-- 引入 MathJax 用于解析 LaTeX (本地副本，失败时降级) -->
     <script>
     MathJax = {
       tex: {
@@ -17,13 +17,15 @@
         processEscapes: true,
         packages: {'[+]': ['mhchem']}
       },
+      // loader: {load: ['[tex]/mhchem']}, // Removed to simplify local usage if possible, or keep?
+      // Keeping loader config might break if it tries to fetch from CDN. Let's try basic config first.
       loader: {load: ['[tex]/mhchem']},
       options: {
         skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
       }
     };
     </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script id="MathJax-script" async src="js/tex-mml-chtml.js"></script>
 </head>
 <body>
     <!-- 移动端菜单切换按钮 -->

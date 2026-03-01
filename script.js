@@ -280,8 +280,10 @@ function renderHome() {
     markdownContent.innerHTML = html;
 
     // 触发 MathJax 渲染
-    if (window.MathJax) {
+    if (window.MathJax && window.MathJax.typesetPromise) {
         MathJax.typesetPromise([markdownContent]).catch((err) => console.log('MathJax typeset failed: ' + err.message));
+    } else {
+        console.warn('MathJax not loaded or not ready.');
     }
 }
 
@@ -324,7 +326,7 @@ async function loadElement(id) {
         }
 
         // 触发 MathJax 渲染
-        if (window.MathJax) {
+        if (window.MathJax && window.MathJax.typesetPromise) {
             MathJax.typesetPromise([markdownContent]).catch((err) => console.log('MathJax typeset failed: ' + err.message));
         }
     } catch (error) {
