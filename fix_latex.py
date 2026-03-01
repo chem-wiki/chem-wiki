@@ -1,11 +1,11 @@
 import re
 import os
 
-files = [
-    'md/special/redox_ranking.md',
-    'md/special/acid_base_ranking.md',
-    'md/special/lewis_ranking.md'
-]
+files = []
+for root, dirs, filenames in os.walk('md'):
+    for filename in filenames:
+        if filename.endswith('.md'):
+            files.append(os.path.join(root, filename))
 
 def fix_latex(content):
     # 1. Wrap \ce{...} in $...$ if not already wrapped

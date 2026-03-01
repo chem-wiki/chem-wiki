@@ -54,38 +54,12 @@ const App = {
 
 // Routing & Navigation
 const Router = {
-    // Safe localStorage wrapper
-    getStorage(key) {
-        try {
-            return localStorage.getItem(key);
-        } catch (e) {
-            console.warn('LocalStorage access denied:', e);
-            return null;
-        }
-    },
-    
-    setStorage(key, value) {
-        try {
-            localStorage.setItem(key, value);
-        } catch (e) {
-            console.warn('LocalStorage access denied:', e);
-        }
-    },
-    
-    removeStorage(key) {
-        try {
-            localStorage.removeItem(key);
-        } catch (e) {
-            console.warn('LocalStorage access denied:', e);
-        }
-    },
-
     init() {
         window.addEventListener('hashchange', () => this.handleHashChange());
         
         // Initial load
         const hash = window.location.hash.substring(1);
-        const lastVisited = this.getStorage('lastVisited');
+        const lastVisited = localStorage.getItem('lastVisited');
 
         if (hash) {
             if (this.isValidId(hash)) {
@@ -95,16 +69,9 @@ const Router = {
                 this.goHome();
             }
         } else if (lastVisited) {
-            // Check if lastVisited is valid
             if (this.isValidId(lastVisited)) {
                 // Update hash without triggering reload loop
-                if (!window.location.hash) {
-                    window.location.hash = lastVisited; 
-                    // No need to call loadPage here, hash change will trigger it
-                    // Wait, hash change listener is async?
-                    // Yes, modifying hash triggers 'hashchange' immediately in most browsers?
-                    // Or next tick.
-                }
+                window.location.hash = lastVisited; 
             } else {
                 this.goHome();
             }
@@ -119,8 +86,6 @@ const Router = {
             if (this.isValidId(hash)) {
                 this.loadPage(hash);
             } else {
-                // Invalid hash, maybe redirect home or show error?
-                // For now, let's go home to be safe
                 this.goHome();
             }
         } else {
@@ -133,116 +98,33 @@ const Router = {
     },
 
     checkIdRecursive(groups, id) {
-        if (!groups || !Array.isArray(groups)) return false;
+        if (!groups) return false;
         for (const group of groups) {
-            if (group.elements && Array.isArray(group.elements) && group.elements.some(el => el.id === id)) return true;
+            if (group.elements && group.elements.some(el => el.id === id)) return true;
             if (group.subGroups && this.checkIdRecursive(group.subGroups, id)) return true;
         }
         return false;
     },
 
     async loadPage(id) {
+        // Prevent double loading if we are already here (except if forced?)
+        // Actually, loadPage is called on hash change, so we just load.
+        
         try {
             const response = await fetch(`md/${id}.md`);
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const mdText = await response.text();
             
             // Render Markdown
-            // Protect MathJax from marked.js parsing
-            // This prevents marked from escaping characters inside math blocks (e.g., underscores)
-            const mathReplacements = [];
-            // Regex explanations:
-            // 1. \$\$[\s\S]*?\$\$: Matches block math $$...$$
-            // 2. \\\[[\s\S]*?\\\]: Matches block math \[...\]
-            // 3. \\\([\s\S]*?\\\): Matches inline math \(...\)
-            // 4. (?<!\\)\$(?:\\.|[^$\\])+?(?<!\\)\$: Matches inline math $...$
-            //    - (?<!\\)\$: Starts with unescaped $
-            //    - (?:\\.|[^$\\])+?: Matches content
-            //    - (?<!\\)\$: Ends with unescaped $
-            // Improved regex to avoid matching $ inside code blocks (backticks)
-            // This is a simplified approach; a full parser is needed for perfect results.
-            // But we can try to exclude matches that are inside backticks.
-            // Alternatively, since we are doing this BEFORE markdown parsing, we can't easily know if we are in code block.
-            // A better approach is to use a negative lookahead/lookbehind or match code blocks first.
-            
-            // Regex details:
-            // 1. (`+)(?:[\s\S]*?)\1: Matches code blocks enclosed in backticks (1 or more).
-            //    - Captured in group 1 (opening backticks), but we match the whole block.
-            // 2. Math blocks.
-            
-            // The logic: find code blocks OR math blocks.
-            // If it's a code block, we return it as is (ignoring any $ inside).
-            // If it's a math block, we process it.
-            
-            // Since JS regex doesn't support recursive matching or balancing groups easily, we use a trick:
-            // Match the code block completely.
-            
-            const tokenRegex = /(`+)(?:[\s\S]*?)\1|(\$\$[\s\S]*?\$\$|\\\[[\s\S]*?\\\]|\\\([\s\S]*?\\\)|(?<!\\)\$(?:\\.|[^$\\])+?(?<!\\)\$)/gm;
-
-            const protectedText = mdText.replace(tokenRegex, (match, backticks, mathBlock) => {
-                if (backticks) {
-                    return match; // It's a code block
-                }
-                
-                // It's a math block
-                const id = `MATH_PLACEHOLDER_${mathReplacements.length}`;
-                     
-                     // Fix common Unicode issues in chemical equations for mhchem/MathJax
-                     // e.g. H₂S -> H2S, 3S↓ -> 3Sv
-                     let content = match;
-                     
-                     const unicodeMap = {
-                         '₀':'0', '₁':'1', '₂':'2', '₃':'3', '₄':'4', '₅':'5', '₆':'6', '₇':'7', '₈':'8', '₉':'9',
-                         '⁺':'+', '⁻':'-', '⁼':'=', '⁽':'(', '⁾':')',
-                         '⁰':'^0', '¹':'^1', '²':'^2', '³':'^3', '⁴':'^4', '⁵':'^5', '⁶':'^6', '⁷':'^7', '⁸':'^8', '⁹':'^9',
-                         '↑':'\\uparrow', '↓':'\\downarrow', '→':'\\rightarrow', '←':'\\leftarrow', '⇌':'\\rightleftharpoons'
-                     };
-                     
-                     // Replace unicode characters
-                     content = content.replace(/[₀₁₂₃₄₅₆₇₈₉⁺⁻⁼⁽⁾⁰¹²³⁴⁵⁶⁷⁸⁹↑↓→←⇌]/g, char => unicodeMap[char] || char);
-     
-                     // Fix non-standard arrows
-                     content = content.replace(/<->>/g, "\\rightleftharpoons");
-                     content = content.replace(/<<->/g, "\\rightleftharpoons");
-     
-                     mathReplacements.push({ id, content: content });
-                     return id;
-            });
-            
-            let html = marked.parse(protectedText);
-            
-            // Restore math content
-            mathReplacements.forEach(item => {
-                html = html.replace(item.id, item.content);
-            });
-            
-            App.markdownContent.innerHTML = html;
+            App.markdownContent.innerHTML = marked.parse(mdText);
             
             // Render MathJax
-            const typeset = () => {
-                if (window.MathJax && window.MathJax.typesetPromise) {
-                    MathJax.typesetPromise([App.markdownContent])
-                        .catch(err => console.log('MathJax typeset failed: ' + err.message));
-                } else if (window.MathJax && window.MathJax.startup && window.MathJax.startup.promise) {
-                    window.MathJax.startup.promise.then(() => {
-                        MathJax.typesetPromise([App.markdownContent]);
-                    });
-                } else {
-                    // Fallback polling if MathJax is still loading
-                    let attempts = 0;
-                    const checkMathJax = setInterval(() => {
-                        attempts++;
-                        if (window.MathJax && window.MathJax.typesetPromise) {
-                            MathJax.typesetPromise([App.markdownContent]);
-                            clearInterval(checkMathJax);
-                        }
-                        if (attempts > 40) clearInterval(checkMathJax); // 20s timeout
-                    }, 500);
-                }
-            };
-            typeset();
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                MathJax.typesetPromise([App.markdownContent])
+                    .catch(err => console.log('MathJax typeset failed: ' + err.message));
+            }
 
-            this.setStorage('lastVisited', id);
+            localStorage.setItem('lastVisited', id);
             Sidebar.updateActive(id);
             window.scrollTo(0, 0);
 
@@ -264,7 +146,7 @@ const Router = {
         }
         
         Sidebar.clearActive();
-        this.removeStorage('lastVisited');
+        localStorage.removeItem('lastVisited');
         
         Home.render();
     },
@@ -431,32 +313,23 @@ const Theme = {
         const iconMoon = document.getElementById('icon-moon');
         
         // Check saved theme or system preference
-        let savedTheme;
-        try {
-            savedTheme = localStorage.getItem('theme');
-        } catch (e) { console.warn(e); }
-
+        const savedTheme = localStorage.getItem('theme');
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         
         if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-            document.documentElement.setAttribute('data-theme', 'dark');
+            document.body.classList.add('dark-mode');
             iconMoon.style.display = 'none';
             iconSun.style.display = 'block';
         }
 
         toggle.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
-            document.documentElement.setAttribute('data-theme', newTheme);
-            const isDark = newTheme === 'dark';
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
             
             iconMoon.style.display = isDark ? 'none' : 'block';
             iconSun.style.display = isDark ? 'block' : 'none';
             
-            try {
-                localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            } catch (e) { console.warn(e); }
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
         });
     }
 };
