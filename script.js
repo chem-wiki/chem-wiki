@@ -420,14 +420,17 @@ const Theme = {
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         
         if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-            document.body.classList.add('dark-mode');
+            document.documentElement.setAttribute('data-theme', 'dark');
             iconMoon.style.display = 'none';
             iconSun.style.display = 'block';
         }
 
         toggle.addEventListener('click', () => {
-            document.body.classList.toggle('dark-mode');
-            const isDark = document.body.classList.contains('dark-mode');
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            const isDark = newTheme === 'dark';
             
             iconMoon.style.display = isDark ? 'none' : 'block';
             iconSun.style.display = isDark ? 'block' : 'none';
