@@ -54,12 +54,38 @@ const App = {
 
 // Routing & Navigation
 const Router = {
+    // Safe localStorage wrapper
+    getStorage(key) {
+        try {
+            return localStorage.getItem(key);
+        } catch (e) {
+            console.warn('LocalStorage access denied:', e);
+            return null;
+        }
+    },
+    
+    setStorage(key, value) {
+        try {
+            localStorage.setItem(key, value);
+        } catch (e) {
+            console.warn('LocalStorage access denied:', e);
+        }
+    },
+    
+    removeStorage(key) {
+        try {
+            localStorage.removeItem(key);
+        } catch (e) {
+            console.warn('LocalStorage access denied:', e);
+        }
+    },
+
     init() {
         window.addEventListener('hashchange', () => this.handleHashChange());
         
         // Initial load
         const hash = window.location.hash.substring(1);
-        const lastVisited = localStorage.getItem('lastVisited');
+        const lastVisited = this.getStorage('lastVisited');
 
         if (hash) {
             if (this.isValidId(hash)) {
@@ -69,11 +95,15 @@ const Router = {
                 this.goHome();
             }
         } else if (lastVisited) {
+            // Check if lastVisited is valid
             if (this.isValidId(lastVisited)) {
                 // Update hash without triggering reload loop
-                // But check if hash is empty first
                 if (!window.location.hash) {
                     window.location.hash = lastVisited; 
+                    // No need to call loadPage here, hash change will trigger it
+                    // Wait, hash change listener is async?
+                    // Yes, modifying hash triggers 'hashchange' immediately in most browsers?
+                    // Or next tick.
                 }
             } else {
                 this.goHome();
@@ -103,9 +133,9 @@ const Router = {
     },
 
     checkIdRecursive(groups, id) {
-        if (!groups) return false;
+        if (!groups || !Array.isArray(groups)) return false;
         for (const group of groups) {
-            if (group.elements && group.elements.some(el => el.id === id)) return true;
+            if (group.elements && Array.isArray(group.elements) && group.elements.some(el => el.id === id)) return true;
             if (group.subGroups && this.checkIdRecursive(group.subGroups, id)) return true;
         }
         return false;
@@ -118,15 +148,82 @@ const Router = {
             const mdText = await response.text();
             
             // Render Markdown
-            App.markdownContent.innerHTML = marked.parse(mdText);
+            // Protect MathJax from marked.js parsing
+            // This prevents marked from escaping characters inside math blocks (e.g., underscores)
+            const mathReplacements = [];
+            // Regex explanations:
+            // 1. \$\$[\s\S]*?\$\$: Matches block math $$...$$
+            // 2. \\\[[\s\S]*?\\\]: Matches block math \[...\]
+            // 3. \\\([\s\S]*?\\\): Matches inline math \(...\)
+            // 4. (?<!\\)\$(?!$)(?:\\.|[^$\\])+?(?<!\\)\$: Matches inline math $...$
+            //    - (?<!\\)\$: Starts with unescaped $
+            //    - (?:\\.|[^$\\])+?: Matches content
+            //    - (?<!\\)\$: Ends with unescaped $
+            const mathRegex = /(\$\$[\s\S]*?\$\$|\\\[[\s\S]*?\\\]|\\\([\s\S]*?\\\)|(?<!\\)\$(?:\\.|[^$\\])+?(?<!\\)\$)/gm;
+
+            const protectedText = mdText.replace(mathRegex, (match) => {
+                const id = `MATH_PLACEHOLDER_${mathReplacements.length}`;
+                
+                // Fix common Unicode issues in chemical equations for mhchem/MathJax
+                // e.g. H₂S -> H2S, 3S↓ -> 3Sv
+                let content = match;
+                
+                // Only apply these fixes if it looks like a chemical equation (contains \ce or \xrightarrow)
+                // or just apply generically to subscripts/superscripts in math mode?
+                // Safest to apply to all math content as these unicode chars are rarely used otherwise in LaTeX.
+                
+                const unicodeMap = {
+                    '₀':'0', '₁':'1', '₂':'2', '₃':'3', '₄':'4', '₅':'5', '₆':'6', '₇':'7', '₈':'8', '₉':'9',
+                    '⁺':'+', '⁻':'-', '⁼':'=', '⁽':'(', '⁾':')',
+                    '⁰':'^0', '¹':'^1', '²':'^2', '³':'^3', '⁴':'^4', '⁵':'^5', '⁶':'^6', '⁷':'^7', '⁸':'^8', '⁹':'^9',
+                    '↑':'\\uparrow', '↓':'\\downarrow', '→':'\\rightarrow', '←':'\\leftarrow', '⇌':'\\rightleftharpoons'
+                };
+                
+                // Replace unicode characters
+                content = content.replace(/[₀₁₂₃₄₅₆₇₈₉⁺⁻⁼⁽⁾⁰¹²³⁴⁵⁶⁷⁸⁹↑↓→←⇌]/g, char => unicodeMap[char] || char);
+
+                // Fix non-standard arrows
+                content = content.replace(/<->>/g, "\\rightleftharpoons");
+                content = content.replace(/<<->/g, "\\rightleftharpoons");
+
+                mathReplacements.push({ id, content: content });
+                return id;
+            });
+            
+            let html = marked.parse(protectedText);
+            
+            // Restore math content
+            mathReplacements.forEach(item => {
+                html = html.replace(item.id, item.content);
+            });
+            
+            App.markdownContent.innerHTML = html;
             
             // Render MathJax
-            if (window.MathJax && window.MathJax.typesetPromise) {
-                MathJax.typesetPromise([App.markdownContent])
-                    .catch(err => console.log('MathJax typeset failed: ' + err.message));
-            }
+            const typeset = () => {
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    MathJax.typesetPromise([App.markdownContent])
+                        .catch(err => console.log('MathJax typeset failed: ' + err.message));
+                } else if (window.MathJax && window.MathJax.startup && window.MathJax.startup.promise) {
+                    window.MathJax.startup.promise.then(() => {
+                        MathJax.typesetPromise([App.markdownContent]);
+                    });
+                } else {
+                    // Fallback polling if MathJax is still loading
+                    let attempts = 0;
+                    const checkMathJax = setInterval(() => {
+                        attempts++;
+                        if (window.MathJax && window.MathJax.typesetPromise) {
+                            MathJax.typesetPromise([App.markdownContent]);
+                            clearInterval(checkMathJax);
+                        }
+                        if (attempts > 40) clearInterval(checkMathJax); // 20s timeout
+                    }, 500);
+                }
+            };
+            typeset();
 
-            localStorage.setItem('lastVisited', id);
+            this.setStorage('lastVisited', id);
             Sidebar.updateActive(id);
             window.scrollTo(0, 0);
 
@@ -148,7 +245,7 @@ const Router = {
         }
         
         Sidebar.clearActive();
-        localStorage.removeItem('lastVisited');
+        this.removeStorage('lastVisited');
         
         Home.render();
     },
@@ -315,7 +412,11 @@ const Theme = {
         const iconMoon = document.getElementById('icon-moon');
         
         // Check saved theme or system preference
-        const savedTheme = localStorage.getItem('theme');
+        let savedTheme;
+        try {
+            savedTheme = localStorage.getItem('theme');
+        } catch (e) { console.warn(e); }
+
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         
         if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
@@ -331,7 +432,9 @@ const Theme = {
             iconMoon.style.display = isDark ? 'none' : 'block';
             iconSun.style.display = isDark ? 'block' : 'none';
             
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            try {
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            } catch (e) { console.warn(e); }
         });
     }
 };
