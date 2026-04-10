@@ -369,6 +369,17 @@ const Home = {
                     这是一个开源的化学知识库，旨在为化学竞赛学生和爱好者提供高质量、系统化的学习资源。
                     当前版本已部署于 <code>chem-wiki.llumi.org</code>。我们非常欢迎您的贡献！
                 </p>
+                <p style="margin-top: 12px; font-size: 1rem; line-height: 1.65; color: var(--text-secondary);">
+                    Chem Wiki 是 llumi 项目网络的一部分。你还可以访问
+                    <a href="https://llumi.org" target="_blank" rel="noopener noreferrer">llumi.org</a>
+                    查看总站，或访问
+                    <a href="https://mire.llumi.org" target="_blank" rel="noopener noreferrer">mire.llumi.org</a>
+                    阅读学生研究论文。
+                </p>
+                <div style="margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap;">
+                    <a href="https://llumi.org" target="_blank" rel="noopener noreferrer" style="display: inline-block; text-decoration: none; background: var(--code-bg); border: 1px solid var(--border-color); color: var(--text-color); padding: 8px 12px; border-radius: 8px; font-size: 0.95rem;">访问 llumi.org</a>
+                    <a href="https://mire.llumi.org" target="_blank" rel="noopener noreferrer" style="display: inline-block; text-decoration: none; background: var(--code-bg); border: 1px solid var(--border-color); color: var(--text-color); padding: 8px 12px; border-radius: 8px; font-size: 0.95rem;">访问 mire.llumi.org</a>
+                </div>
                 <div style="margin-top: 20px;">
                     <button onclick="window.location.hash='contribution'" 
                             style="background-color: var(--primary-color, #007bff); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 1rem; transition: background 0.3s;">
