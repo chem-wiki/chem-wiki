@@ -1,27 +1,35 @@
 :root {
     /* 浅色模式变量 */
-    --bg-color: #ffffff;
-    --text-color: #333333;
-    --sidebar-bg: #f5f5f5;
-    --sidebar-hover: #e0e0e0;
-    --sidebar-active: #d0d0d0;
-    --border-color: #dddddd;
+    --bg-color: #f9fafb;
+    --text-color: #1f2937;
+    --sidebar-bg: #ffffff;
+    --sidebar-hover: #eef2ff;
+    --sidebar-active: #e0e7ff;
+    --border-color: #e5e7eb;
     --code-bg: #f6f8fa;
-    --link-color: #0366d6;
-    --accent-color: #005cc5;
+    --link-color: #4f46e5;
+    --accent-color: #4f46e5;
+    --bg-secondary: #ffffff;
+    --text-primary: #111827;
+    --text-secondary: #4b5563;
+    --primary-color: #4f46e5;
 }
 
 [data-theme="dark"] {
     /* 深色模式变量 */
-    --bg-color: #1e1e1e;
-    --text-color: #c9d1d9;
-    --sidebar-bg: #252526;
-    --sidebar-hover: #2a2d2f;
-    --sidebar-active: #37373d;
-    --border-color: #30363d;
-    --code-bg: #161b22;
-    --link-color: #58a6ff;
-    --accent-color: #79c0ff;
+    --bg-color: #111827;
+    --text-color: #e5e7eb;
+    --sidebar-bg: #0f172a;
+    --sidebar-hover: #1e293b;
+    --sidebar-active: #312e81;
+    --border-color: #1f2937;
+    --code-bg: #0b1220;
+    --link-color: #a5b4fc;
+    --accent-color: #818cf8;
+    --bg-secondary: #0f172a;
+    --text-primary: #f3f4f6;
+    --text-secondary: #cbd5e1;
+    --primary-color: #818cf8;
 }
 
 * {
@@ -31,17 +39,77 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: "Inter", "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
     line-height: 1.6;
     transition: background-color 0.3s, color 0.3s;
 }
 
+a {
+    color: var(--link-color);
+}
+
+.site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 1100;
+    background: rgba(255, 255, 255, 0.92);
+    border-bottom: 1px solid var(--border-color);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+.theme-icon-hidden {
+    display: none;
+}
+
+[data-theme="dark"] .site-nav {
+    background: rgba(15, 23, 42, 0.9);
+}
+
+.site-nav-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 20px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.site-brand {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+.site-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.site-nav-links a {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text-color);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.site-nav-links a:hover,
+.site-nav-links a[aria-current="page"] {
+    color: var(--accent-color);
+}
+
 /* 布局 */
 .container {
     display: flex;
-    min-height: 100vh;
+    min-height: calc(100vh - 56px);
 }
 
 /* 侧边栏 */
@@ -52,10 +120,10 @@ body {
     padding: 20px 0;
     flex-shrink: 0;
     transition: background-color 0.3s, border-color 0.3s;
-    height: 100vh;
+    height: calc(100vh - 56px);
     overflow-y: auto;
     position: sticky;
-    top: 0;
+    top: 56px;
 }
 
 .sidebar h2 {
@@ -63,6 +131,10 @@ body {
     font-size: 1.2rem;
     border-bottom: 1px solid var(--border-color);
     margin-bottom: 10px;
+}
+
+.sidebar-title {
+    cursor: pointer;
 }
 
 .group-header {
@@ -121,7 +193,7 @@ details[open] > .group-header::after {
 .content {
     flex-grow: 1;
     padding: 40px;
-    max-width: 900px;
+    max-width: 980px;
     margin: 0 auto;
     overflow-y: auto;
 }
@@ -167,7 +239,7 @@ details[open] > .group-header::after {
 /* 主题切换按钮 */
 .theme-toggle {
     position: fixed;
-    top: 20px;
+    top: 72px;
     right: 70px; /* Shifted left to make room for GitHub icon */
     background: var(--sidebar-bg);
     border: 1px solid var(--border-color);
@@ -191,7 +263,7 @@ details[open] > .group-header::after {
 /* GitHub Link */
 .github-link {
     position: fixed;
-    top: 20px;
+    top: 72px;
     right: 20px;
     background: var(--sidebar-bg);
     border: 1px solid var(--border-color);
@@ -216,7 +288,7 @@ details[open] > .group-header::after {
 .mobile-menu-toggle {
     display: none;
     position: fixed;
-    top: 20px;
+    top: 72px;
     left: 20px;
     background: var(--sidebar-bg);
     border: 1px solid var(--border-color);
@@ -233,8 +305,24 @@ details[open] > .group-header::after {
 
 /* 响应式布局 */
 @media (max-width: 768px) {
+    .site-nav-inner {
+        padding: 0 12px;
+        height: auto;
+        min-height: 52px;
+        align-items: flex-start;
+        flex-direction: column;
+        justify-content: center;
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+
+    .site-nav-links {
+        gap: 12px;
+    }
+
     .mobile-menu-toggle {
         display: flex;
+        top: 92px;
     }
 
     .container {
@@ -251,7 +339,7 @@ details[open] > .group-header::after {
         box-shadow: 2px 0 10px rgba(0,0,0,0.2);
         transition: left 0.3s ease;
         overflow-y: auto;
-        padding-top: 70px; /* 为汉堡菜单留出空间 */
+        padding-top: 130px; /* 为顶部导航与汉堡按钮留出空间 */
     }
 
     .sidebar.open {
@@ -282,7 +370,12 @@ details[open] > .group-header::after {
     }
     
     .content {
-        padding: 70px 20px 20px; /* 顶部留出按钮空间 */
+        padding: 120px 20px 20px; /* 顶部留出导航与按钮空间 */
         width: 100%;
+    }
+
+    .theme-toggle,
+    .github-link {
+        top: 92px;
     }
 }

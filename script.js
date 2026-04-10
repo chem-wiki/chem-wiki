@@ -244,6 +244,9 @@ const Router = {
 
             this.setStorage('lastVisited', id);
             Sidebar.updateActive(id);
+            const activeItem = document.querySelector(`.sidebar li[data-id="${id}"]`);
+            const activeName = activeItem ? activeItem.textContent.trim() : id;
+            document.title = `${activeName} | Chem Wiki`;
             window.scrollTo(0, 0);
 
             // Close mobile sidebar
@@ -265,6 +268,7 @@ const Router = {
         
         Sidebar.clearActive();
         this.removeStorage('lastVisited');
+        document.title = 'Chem Wiki';
         
         Home.render();
     },
